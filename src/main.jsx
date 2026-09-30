@@ -19,6 +19,7 @@ import WarRoomGame from './WarRoomGame.jsx';
 import { CinemaProvider, CinemaIntro, OperationScroll, DepthScene, StageJourney, BagrationNetwork, TimeRift, ReplayInvitation } from './Cinema.jsx';
 import './map-accuracy.css';
 import './palette.css';
+import './site-theme.css';
 
 const stages = [
   { date:'23 июня', short:'23.06', title:'Прорыв фронта', city:'Витебск', stat:'4 фронта', text:'Начало согласованного наступления. Оборона группы армий «Центр» взломана на нескольких направлениях.', x:73, y:25, scale:1.04 },
