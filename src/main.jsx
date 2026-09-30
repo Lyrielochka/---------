@@ -9,14 +9,14 @@ import {
 import './styles.css';
 import './route.css';
 import {
-  Cities, Commanders, Connections, Forces, Partisans, Prehistory, Results,
+  Cities, Commanders, Forces, Partisans, Prehistory, Results,
   RichTacticalMap, ScrollProgress, Strategy, Technology, ThenNow, mapMoments
 } from './ExplorerSections.jsx';
 import { ArchiveDesk, ExperienceMotion } from './Experience.jsx';
 import Aviators from './Aviators.jsx';
 import PartisanMap from './PartisanMap.jsx';
 import WarRoomGame from './WarRoomGame.jsx';
-import { CinemaProvider, CinemaIntro, OperationScroll, DepthScene, StageJourney, BagrationNetwork, TimeRift, ReplayInvitation } from './Cinema.jsx';
+import { CinemaProvider, CinemaIntro, OperationScroll, DepthScene, StageJourney, TimeRift, ReplayInvitation } from './Cinema.jsx';
 import './map-accuracy.css';
 import './palette.css';
 import './site-theme.css';
@@ -61,7 +61,7 @@ const Reveal = ({children, className='', delay=0}) => (
     viewport={{once:true, margin:'-80px'}} transition={{duration:.85,delay,ease:[.22,1,.36,1]}}>{children}</motion.div>
 );
 
-const routeGroup={hero:'intro',prehistory:'intro',summer:'intro',partisans:'commanders',opening:'map',timeline:'map',events:'map',connections:'map',replay:'results','then-now':'memory'};
+const routeGroup={hero:'intro',prehistory:'intro',summer:'intro',partisans:'commanders',opening:'map',timeline:'map',events:'map',replay:'results','then-now':'memory'};
 
 function Header({activeSection}) {
   const [open,setOpen]=useState(false);
@@ -70,7 +70,7 @@ function Header({activeSection}) {
   return <>
     <header className={'topbar '+(activeSection==='hero'?'cover-header':'')}>
       <a href="#hero" className="brand"><span className="brand-mark"><b>Б</b><i>44</i></span><span className="brand-copy">БАГРАТИОН<small>ЦИФРОВОЙ АРХИВ</small></span></a>
-      <div className="status"><span className="status-live"><i/>АРХИВ / ONLINE</span><time>{activeSection==='hero'?'23.VI — 29.VIII · 1944':'ИССЛЕДОВАНИЕ'}</time>{activeSection!=='hero'&&<span>{({intro:'Введение',prehistory:'Исходная обстановка',summer:'Обстановка',strategy:'Замысел',commanders:'Командование',forces:'Соединения',partisans:'Подготовка',technology:'Обеспечение',opening:'Начало операции',map:'Атлас',timeline:'Хронология','operation-scroll':'Ход операции',events:'Этапы',cities:'Города',aviators:'Женщины в небе',connections:'Связи',results:'Итоги',significance:'Значение',replay:'Повторение','then-now':'Время и память',memory:'Память','decision-lab':'Штаб'})[activeSection]}</span>}</div>
+      <div className="status"><span className="status-live"><i/>АРХИВ / ONLINE</span><time>{activeSection==='hero'?'23.VI — 29.VIII · 1944':'ИССЛЕДОВАНИЕ'}</time>{activeSection!=='hero'&&<span>{({intro:'Введение',prehistory:'Исходная обстановка',summer:'Обстановка',strategy:'Замысел',commanders:'Командование',forces:'Соединения',partisans:'Подготовка',technology:'Обеспечение',opening:'Начало операции',map:'Атлас',timeline:'Хронология','operation-scroll':'Ход операции',events:'Этапы',cities:'Города',aviators:'Женщины в небе',results:'Итоги',significance:'Значение',replay:'Повторение','then-now':'Время и память',memory:'Память','decision-lab':'Штаб'})[activeSection]}</span>}</div>
       <button className="menu-btn" onClick={()=>setOpen(v=>!v)} aria-label="Меню">{open?<X/>:<Menu/>}</button>
     </header>
     <nav className={'side-nav '+(activeSection==='hero'?'cover-side-nav':'')}>
@@ -183,9 +183,9 @@ function App(){
   const {sx,sy,active:cursorActive}=useCursor();
   const mx=useSpring(0,{stiffness:35,damping:20}), my=useSpring(0,{stiffness:35,damping:20});
   useEffect(()=>{if(reduced||!matchMedia('(pointer:fine)').matches)return;const move=e=>{if(window.scrollY>innerHeight)return;mx.set((e.clientX/window.innerWidth-.5)*-18);my.set((e.clientY/window.innerHeight-.5)*-12)};window.addEventListener('mousemove',move,{passive:true});return()=>window.removeEventListener('mousemove',move)},[mx,my,reduced]);
-  useEffect(()=>{const ids=['hero','intro','prehistory','summer','strategy','commanders','partisans','opening','map','connections','technology','aviators','archive','results','decision-lab'];const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&setSection(e.target.id)),{threshold:0,rootMargin:'-20% 0px -65% 0px'});ids.forEach(id=>{const el=document.getElementById(id);if(el)io.observe(el)});return()=>io.disconnect()},[]);
+  useEffect(()=>{const ids=['hero','intro','prehistory','summer','strategy','commanders','partisans','opening','map','technology','aviators','archive','results','decision-lab'];const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&setSection(e.target.id)),{threshold:0,rootMargin:'-20% 0px -65% 0px'});ids.forEach(id=>{const el=document.getElementById(id);if(el)io.observe(el)});return()=>io.disconnect()},[]);
   const showOnMap=index=>{setActive(index);document.getElementById('map')?.scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'})};
-  return <><ExperienceMotion/><motion.div className={'cursor '+(cursorActive?'active':'')} style={{x:sx,y:sy}}/><div className="noise"/><ScrollProgress/><Header activeSection={section}/><RouteIndicator activeSection={section}/><CinemaIntro/><main><Introduction/><Prehistory/><DepthScene/><RouteBridge label="ИСХОДНАЯ ОБСТАНОВКА" question="Как собирались изменить положение на фронте?" to="strategy"/><Strategy onMap={i=>showOnMap([2,3,4,5][i-1])}/><RouteBridge label="ЗАМЫСЕЛ" question="Кто должен был воплотить этот план?" to="commanders"/><Commanders onMap={i=>showOnMap([2,3,4,5][i-1])}/><PartisanMap/><Opening/><RichTacticalMap active={active} setActive={setActive}/><BagrationNetwork/><Technology/><RouteBridge label="АРСЕНАЛ НАСТУПЛЕНИЯ" question="Кто поднимался в небо летом 1944 года?" to="aviators"/><Aviators/><ArchiveDesk onMap={showOnMap}/><RouteBridge label="СВИДЕТЕЛЬСТВА И ОБРАЗЫ" question="Каковы были результаты?" to="results"/><Results/><WarRoomGame/></main>
+  return <><ExperienceMotion/><motion.div className={'cursor '+(cursorActive?'active':'')} style={{x:sx,y:sy}}/><div className="noise"/><ScrollProgress/><Header activeSection={section}/><RouteIndicator activeSection={section}/><CinemaIntro/><main><Introduction/><Prehistory/><DepthScene/><RouteBridge label="ИСХОДНАЯ ОБСТАНОВКА" question="Как собирались изменить положение на фронте?" to="strategy"/><Strategy onMap={i=>showOnMap([2,3,4,5][i-1])}/><RouteBridge label="ЗАМЫСЕЛ" question="Кто должен был воплотить этот план?" to="commanders"/><Commanders onMap={i=>showOnMap([2,3,4,5][i-1])}/><PartisanMap/><Opening/><RichTacticalMap active={active} setActive={setActive}/><Technology/><RouteBridge label="АРСЕНАЛ НАСТУПЛЕНИЯ" question="Кто поднимался в небо летом 1944 года?" to="aviators"/><Aviators/><ArchiveDesk onMap={showOnMap}/><RouteBridge label="СВИДЕТЕЛЬСТВА И ОБРАЗЫ" question="Каковы были результаты?" to="results"/><Results/><WarRoomGame/></main>
   </>;
 }
 
