@@ -18,12 +18,11 @@ export default function Aviators(){
     <div className="aviators-heading"><div><span className="section-kicker">ЖЕНЩИНЫ НА ФРОНТЕ / ЛЕТО 1944</span><h2 id="aviators-title">ЖЕНЩИНЫ В НЕБЕ<br/><em>«БАГРАТИОНА»</em></h2></div><p>Они вели бомбардировщики к целям и поднимались в ночное небо, поддерживая наступление над Беларусью.</p></div>
     <div className="aviators-gallery">{pilots.map((pilot,index)=><motion.button key={pilot.id} type="button" className={'aviator-card aviator-'+pilot.id+(active===index?' is-active':'')} aria-label={`${pilot.full}. ${pilot.role}. ${pilot.plane}. ${pilot.short}`} aria-pressed={active===index} onClick={()=>setActive(index)} initial={reduced?false:{opacity:0,y:45}} whileInView={{opacity:1,y:0}} viewport={{once:true,amount:.18}} transition={{duration:.6,delay:index*.08,ease:[.22,1,.36,1]}}>
       <span className="aviator-card-grid" aria-hidden="true"/><span className="aviator-card-top"><span>0{index+1} / АВИАЦИЯ</span><span>1944 <MoveUpRight size={13}/></span></span>
-      <span className="aviator-portrait" aria-hidden="true"><span className="portrait-inner"><span className="portrait-halo"/><span className="portrait-silhouette"/></span><small>ФОТОАРХИВ · ПОРТРЕТ</small><b>{String(index+1).padStart(2,'0')}</b></span>
       <span className="aviator-plane"><img src={pilot.image} alt="" loading="lazy"/><small>{pilot.plane} / МУЗЕЙНАЯ ИЛЛЮСТРАЦИЯ</small></span>
       <span className="aviator-copy"><span className="aviator-role">{pilot.role}</span><strong>{pilot.first}<br/>{pilot.last}</strong><span className="aviator-summary">{pilot.short}</span><span className="aviator-badges"><i>{pilot.plane}</i><i>{pilot.unit}</i></span></span>
       <span className="aviator-more"><span>{active===index?pilot.detail:pilot.operation}</span><ArrowUpRight size={15}/></span>
     </motion.button>)}</div>
-    <div className="aviators-foot"><span>ЛИЦА И ГОЛОСА НАСТУПЛЕНИЯ <i/> ПОРТРЕТЫ БУДУТ ДОБАВЛЕНЫ ПОСЛЕ АРХИВНОЙ СВЕРКИ</span><a href="https://pamyat-naroda.ru/ops/vitebsko-orshanskaya-nastupatelnaya-operatsiya-operatsiya-5-go-udara/" target="_blank" rel="noreferrer">ИСТОРИЧЕСКИЕ МАТЕРИАЛЫ <ArrowUpRight size={14}/></a></div>
+    <div className="aviators-foot"><span>ДНЕВНЫЕ И НОЧНЫЕ ВЫЛЕТЫ · ЛЕТО 1944</span><a href="https://pamyat-naroda.ru/ops/vitebsko-orshanskaya-nastupatelnaya-operatsiya-operatsiya-5-go-udara/" target="_blank" rel="noreferrer">ИСТОРИЧЕСКИЕ МАТЕРИАЛЫ <ArrowUpRight size={14}/></a></div>
   </section>;
 }
 

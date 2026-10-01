@@ -10,7 +10,7 @@ import './styles.css';
 import './route.css';
 import {
   Cities, Commanders, Forces, Partisans, Prehistory, Results,
-  RichTacticalMap, ScrollProgress, Strategy, Technology, ThenNow, mapMoments
+  RichTacticalMap, ScrollProgress, Strategy, Technology, ThenNow, mapMoments, operationScaleData
 } from './ExplorerSections.jsx';
 import { ArchiveDesk, ExperienceMotion } from './Experience.jsx';
 import Aviators from './Aviators.jsx';
@@ -20,6 +20,8 @@ import { CinemaProvider, CinemaIntro, OperationScroll, DepthScene, StageJourney,
 import './map-accuracy.css';
 import './palette.css';
 import './site-theme.css';
+import { ChapterBreak, CampaignFigures } from './StoryDesign.jsx';
+import './story-design.css';
 
 const stages = [
   { date:'23 июня', short:'23.06', title:'Прорыв фронта', city:'Витебск', stat:'4 фронта', text:'Начало согласованного наступления. Оборона группы армий «Центр» взломана на нескольких направлениях.', x:73, y:25, scale:1.04 },
@@ -63,9 +65,11 @@ const Reveal = ({children, className='', delay=0}) => (
 
 const routeGroup={hero:'intro',prehistory:'intro',summer:'intro',partisans:'commanders',opening:'map',timeline:'map',events:'map',replay:'results','then-now':'memory'};
 
+const storyOrder=['intro','strategy','commanders','technology','aviators','map','results','archive','decision-lab'];
 function Header({activeSection}) {
   const [open,setOpen]=useState(false);
   const nav=[['intro','Об операции'],['strategy','Замысел'],['commanders','Участники'],['map','Ход операции'],['technology','Техника'],['aviators','Лётчицы'],['archive','Архив'],['results','Итоги'],['decision-lab','Штаб']];
+  if(activeSection!=='hero')nav.sort((a,b)=>storyOrder.indexOf(a[0])-storyOrder.indexOf(b[0]));
   const current=routeGroup[activeSection]||activeSection;
   return <>
     <header className={'topbar '+(activeSection==='hero'?'cover-header':'')}>
@@ -88,17 +92,18 @@ const routeSteps=[
 ];
 
 function RouteIndicator({activeSection}) {
+  const steps=activeSection==='hero'?routeSteps:[...routeSteps].sort((a,b)=>storyOrder.indexOf(a[0])-storyOrder.indexOf(b[0]));
   const current=routeGroup[activeSection]||activeSection;
   const ref=useRef(null);
   useEffect(()=>{const nav=ref.current;if(!nav||innerWidth>900)return;const item=nav.querySelector('.active');if(item)nav.scrollTo({left:item.offsetLeft-(nav.clientWidth-item.clientWidth)/2,behavior:'smooth'})},[current]);
-  return <nav ref={ref} className={'route-indicator '+(activeSection==='hero'?'cover-navigation':'')} aria-label="Учебный маршрут">{routeSteps.map(([id,label],i)=><a key={id} href={'#'+id} className={current===id?'active':''} aria-current={current===id?'step':undefined}><span>{String(i+1).padStart(2,'0')}</span>{label}</a>)}</nav>;
+  return <nav ref={ref} className={'route-indicator '+(activeSection==='hero'?'cover-navigation':'')} aria-label="Учебный маршрут">{steps.map(([id,label],i)=><a key={id} href={'#'+id} className={current===id?'active':''} aria-current={current===id?'step':undefined}><span>{String(i+1).padStart(2,'0')}</span>{label}</a>)}</nav>;
 }
 
-function Introduction(){return <section id="intro" className="route-intro section"><div><span className="section-kicker">01 / ВВЕДЕНИЕ</span><h2>ПОЧЕМУ ПОНАДОБИЛАСЬ <em>ОПЕРАЦИЯ?</em></h2></div><p>К лету 1944 года немецкая группа армий «Центр» удерживала Беларусь и её укреплённые узлы. Чтобы освободить территорию и открыть путь на запад, советским войскам предстояло прорвать оборону сразу на нескольких направлениях. Операция «Багратион» объединила эти удары в единый замысел.</p><a className="text-btn" href="#prehistory">УВИДЕТЬ ИСХОДНУЮ ОБСТАНОВКУ <ArrowRight size={16}/></a></section>}
+function Introduction(){return <section id="intro" className="route-intro section"><div><span className="section-kicker">ПЕРЕД НАЧАЛОМ</span><h2>БЕЛАРУСЬ.<br/><em>ЛЕТО 1944.</em></h2></div><p>К лету 1944 года немецкая группа армий «Центр» удерживала Беларусь и её укреплённые узлы. Чтобы освободить территорию и открыть путь на запад, советским войскам предстояло прорвать оборону сразу на нескольких направлениях. Операция «Багратион» объединила эти удары в единый замысел.</p><a className="text-btn" href="#prehistory">НАКАНУНЕ НАСТУПЛЕНИЯ <ArrowRight size={16}/></a></section>}
 
 function RouteBridge({to,question,label}){return <div className="route-bridge"><span>{label}</span><a href={'#'+to}>{question}<ArrowRight size={19}/></a></div>}
 
-function Opening(){return <section id="opening" className="route-opening"><div className="opening-grid"/><span className="section-kicker">ОТ ПОДГОТОВКИ — К НАСТУПЛЕНИЮ</span><strong>22 <em>ИЮНЯ</em> 1944</strong><p>Накануне основного наступления. Теперь проследите, как замысел менял линию фронта день за днём.</p><a href="#map">ПЕРЕЙТИ К ХОДУ ОПЕРАЦИИ <ArrowDown size={17}/></a></section>}
+function Opening(){return <section id="opening" className="route-opening"><div className="opening-grid"/><span className="section-kicker">ОТ ПОДГОТОВКИ — К НАСТУПЛЕНИЮ</span><strong>22 <em>ИЮНЯ</em> 1944</strong><p>Накануне основного наступления. Впереди — прорыв обороны, бои за города и путь к Минску.</p><a href="#map">ПЕРЕЙТИ К ХОДУ ОПЕРАЦИИ <ArrowDown size={17}/></a></section>}
 
 function Significance(){return <section id="significance" className="route-significance section"><span className="section-kicker">ПОСЛЕ ИТОГОВ / ГЛАВНЫЙ ВЫВОД</span><h2>ПОЧЕМУ ЭТО <em>БЫЛО ВАЖНО?</em></h2><div className="significance-grid"><p><b>01 / ОСВОБОЖДЕНИЕ</b>Наступление завершило освобождение Беларуси и продолжилось за её пределами.</p><p><b>02 / ПЕРЕЛОМ НА ФРОНТЕ</b>Разгром группы армий «Центр» изменил положение на центральном направлении.</p><p><b>03 / ОБЩИЙ ЗАМЫСЕЛ</b>Согласованные действия фронтов, армий и партизан превратили отдельные удары в одну операцию.</p></div><a href="https://www.prlib.ru/news/1271398" target="_blank" rel="noreferrer">ИСТОРИЧЕСКАЯ СПРАВКА ↗</a></section>}
 
@@ -185,7 +190,20 @@ function App(){
   useEffect(()=>{if(reduced||!matchMedia('(pointer:fine)').matches)return;const move=e=>{if(window.scrollY>innerHeight)return;mx.set((e.clientX/window.innerWidth-.5)*-18);my.set((e.clientY/window.innerHeight-.5)*-12)};window.addEventListener('mousemove',move,{passive:true});return()=>window.removeEventListener('mousemove',move)},[mx,my,reduced]);
   useEffect(()=>{const ids=['hero','intro','prehistory','summer','strategy','commanders','partisans','opening','map','technology','aviators','archive','results','decision-lab'];const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&setSection(e.target.id)),{threshold:0,rootMargin:'-20% 0px -65% 0px'});ids.forEach(id=>{const el=document.getElementById(id);if(el)io.observe(el)});return()=>io.disconnect()},[]);
   const showOnMap=index=>{setActive(index);document.getElementById('map')?.scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'})};
-  return <><ExperienceMotion/><motion.div className={'cursor '+(cursorActive?'active':'')} style={{x:sx,y:sy}}/><div className="noise"/><ScrollProgress/><Header activeSection={section}/><RouteIndicator activeSection={section}/><CinemaIntro/><main><Introduction/><Prehistory/><DepthScene/><RouteBridge label="ИСХОДНАЯ ОБСТАНОВКА" question="Как собирались изменить положение на фронте?" to="strategy"/><Strategy onMap={i=>showOnMap([2,3,4,5][i-1])}/><RouteBridge label="ЗАМЫСЕЛ" question="Кто должен был воплотить этот план?" to="commanders"/><Commanders onMap={i=>showOnMap([2,3,4,5][i-1])}/><PartisanMap/><Opening/><RichTacticalMap active={active} setActive={setActive}/><Technology/><RouteBridge label="АРСЕНАЛ НАСТУПЛЕНИЯ" question="Кто поднимался в небо летом 1944 года?" to="aviators"/><Aviators/><ArchiveDesk onMap={showOnMap}/><RouteBridge label="СВИДЕТЕЛЬСТВА И ОБРАЗЫ" question="Каковы были результаты?" to="results"/><Results/><WarRoomGame/></main>
+  return <><ExperienceMotion/><motion.div className={'cursor '+(cursorActive?'active':'')} style={{x:sx,y:sy}}/><div className="noise"/><ScrollProgress/><Header activeSection={section}/><RouteIndicator activeSection={section}/><CinemaIntro/>
+    <main className="story-site">
+      <Introduction/><Prehistory/>
+      <ChapterBreak number="01" label="ЗАМЫСЕЛ" title="Удары должны встретиться." detail="Четыре фронта. Общее направление — Минск."/>
+      <Strategy onMap={i=>showOnMap([2,3,4,5][i-1])}/><Commanders onMap={i=>showOnMap([2,3,4,5][i-1])}/>
+      <Technology/><Aviators/><PartisanMap/>
+      <ChapterBreak number="02" label="НАСТУПЛЕНИЕ" title="Подготовка становится действием." detail="От первых ударов — к освобождению городов."/>
+      <Opening/><RichTacticalMap active={active} setActive={setActive}/>
+      <CampaignFigures data={operationScaleData}/>
+      <ChapterBreak number="03" label="ПАМЯТЬ" title="За каждой датой — люди." detail="Образы, места и следы лета 1944 года."/>
+      <ArchiveDesk onMap={showOnMap}/>
+      <ChapterBreak number="04" label="ВАШ ХОД" title="Теперь решения за вами." detail="Три направления. Ограниченные ресурсы. Одна цель."/>
+      <WarRoomGame/>
+    </main>
   </>;
 }
 
